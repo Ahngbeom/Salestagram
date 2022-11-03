@@ -1,28 +1,14 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
-import React, { useState } from 'react';
-// import logo from './logo.svg';
-import './App.css';
 
-function ProductRegisterForm() {
-  return (
-    <form>
-      <label>Product Name:
-        <input type="text" />
-      </label>
-      <label>Product Price:
-        <input type="text" />
-      </label>
-      <label>Product Stock:
-        <input type="text" />
-      </label>
-    </form>
-  )
-}
+import React, { useState } from 'react';
+import './App.css';
+import ProductRegister from './Product/Register'
+import ProductListCard from './Product/List'
 
 function App() {
   let [상품명, 상품변경] = useState(['A', 'B', 'C']);
-
+  let [Like, increaseLike] = useState(0);
 
   return (
     <div className="App">
@@ -33,19 +19,25 @@ function App() {
         </span>
       </div>
       <div className='App-header'>
-        <button>상품 등록</button>
-        <ProductRegisterForm />
+        {/* <Button variant="primary">상품 등록</Button> */}
+        <ProductRegister />
         <ul>
           <li>
             {상품명[0]}
+            <span className=' ' onClick={() => { increaseLike(Like + 1) }}>👍 {Like}</span>
           </li>
           <li>
             {상품명[1]}
+            <span className=' ' onClick={() => { increaseLike(Like + 1) }}>👍 {Like}</span>
           </li>
           <li>
             {상품명[2]}
+            <span className=' ' onClick={() => { increaseLike(Like + 1) }}>👍 {Like}</span>
           </li>
         </ul>
+      </div>
+      <div>
+        <ProductListCard />
       </div>
     </div>
   );
