@@ -4,10 +4,22 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// const productRegisterPage = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <App />
+//   },
+//   // {
+//   //   path: "/product/registration",
+//   //   element: <ProductRegister />
+//   // }
+// ])
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+      {/* <RouterProvider router={productRegisterPage} /> */}
+      <App />
   </React.StrictMode>
 );
 
