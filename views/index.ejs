@@ -1,21 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-  
+
 <%- include('header'); -%>
 
-<body>
-  <h1>
-    <%= title %>
-  </h1>
-  <p>Welcome to <%= title %>
-  </p>
+  <body>
+    <div class="container">
+      <h1>
+        <%= title %>
+      </h1>
+      <p>Welcome to <%= title %>
+      </p>
+    </div>
 
-  <ul>
-    <li></li>
-  </ul>
+    <div class="container">
+      <div class="d-flex justify-content-between">
+        <div class="border col-6">
+          <ul id="productList" class="list-group list-group-flush">
+          </ul>
+        </div>
 
-  <button type="button" id="productRegistrationSubmitBtn">상품 등록</button>
-</body>
-<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-<script src="javascripts/product.js"></script>
+        <form class="col-4" id="productRegisterForm">
+          <div class="mb-3">
+            <label for="product_name" class="form-label">상품명</label>
+            <input type="text" class="form-control" name="name" id="product_name">
+          </div>
+          <div class="mb-3">
+            <label for="product_details" class="form-label">상품 설명</label>
+            <textarea class="form-control" name="details" cols="30" rows="5" id="product_details"></textarea>
+          </div>
+          <button class="btn btn-primary" type="button" id="productRegistrationSubmitBtn">상품 등록</button>
+        </form>
+      </div>
+    </div>
+
+
+  </body>
+  <script src="javascripts/product.js"></script>
+
 </html>
