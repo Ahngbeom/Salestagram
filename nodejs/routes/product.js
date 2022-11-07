@@ -2,11 +2,13 @@ var express = require('express');
 var router = express.Router();
 
 const redis = require('redis');
-const redis_client = redis.createClient();
-// const redis_client = redis.createClient({
-//   host: "redis-server",
-//   port: "6379"
-// });
+// const redis_client = redis.createClient();
+const redis_client = redis.createClient({
+  // host: "redis",
+  // port: "6379"
+  url: "redis://redis:6379",
+  legacyMode: true
+});
 
 redis_client.on('error', (err) => {
   console.log(`Error ${err}`)
@@ -29,9 +31,15 @@ router.get('/', async (req, res, next) => {
 router.get('/product/list', async (req, res, next) => {
   await redis_client.connect();
   let list = [];
-  for (const id of await redis_client.KEYS('product:id:*')) {
-    const product_info = await redis_client.HGETALL(id);
-    list.push(new Product(id.split(':')[2], product_info.name, product_info.details));
+  const product_keys = await redis_client.KEYS('product:id:*');
+  console.log(product_keys);
+  console.log("is Array? ", Array.isArray(product_keys));
+  console.log(product_keys.length);
+  if (product_keys.length > 0) {
+    for (const id of product_keys) {
+      const product_info = await redis_client.HGETALL(id);
+      list.push(new Product(id.split(':')[2], product_info.name, product_info.details));
+    }
   }
   console.log(list);
   res.json(list)
