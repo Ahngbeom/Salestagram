@@ -1,5 +1,6 @@
+start: up
+
 up:
-# docker-compose -f docker-compose.yml -p salestagram up --build --detach
 	docker-compose -f docker-compose.yml -p salestagram up --build
 
 up-detach:
@@ -24,7 +25,7 @@ clean: down
 ### Image	
 	docker image prune -a --force
 
-re : clean up
+re : clean start
 
 re-detach : clean up-detach
 

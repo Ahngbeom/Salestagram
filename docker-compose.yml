@@ -1,34 +1,36 @@
-version: '3'
+version: '3.9'
 
 services:
-  nginx: 
-    container_name: salestaram-nginx-proxy
-    build: nginx
-    ports:
-      - 80:80
-    networks:
-      - salestagram-networks
-    restart: on-failure
   redis:
-    container_name: salestagram-redis
+    container_name: redis
     image: redis:alpine
     ports:
-      - 6379:6379
+      - '6379:6379'
     networks:
       - salestagram-networks
     restart: unless-stopped
-  nodejs:
-    container_name: salestagram-nodejsExpress
-    build: nodejs
+  nodejs-express:
+    container_name: nodejs-express
+    build: ./nodejs
     ports:
-      - 8080:8080
+      - '8080:8080'
     networks:
       - salestagram-networks
-    restart: on-failure
     depends_on:
       - redis
-  
+    restart: on-failure
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    ports:
+      - '80:80'
+    networks:
+      - salestagram-networks
+    depends_on:
+      # - redis
+      - nodejs-express
+    restart: on-failure
 
 networks:
   salestagram-networks:
-    driver: bridge 
+    driver: bridge

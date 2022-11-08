@@ -8,7 +8,7 @@ COPY . .
 
 EXPOSE 8080
 
-RUN apk add --update nodejs npm
+RUN apk add --update nodejs npm redis
 RUN npm install
 
 CMD [ "node", "./bin/www" ]
