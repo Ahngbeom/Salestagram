@@ -1,13 +1,11 @@
-FROM nginx:alpine
+FROM nginx:stable-alpine
 
-COPY default.conf /etc/nginx/conf.d/default.conf
-
-RUN apk add uwsgi-python3
+COPY nginx.conf /etc/nginx/nginx.conf
 
 VOLUME [ "/etc/nginx" ]
 
-EXPOSE 80
+# EXPOSE 80
 
-STOPSIGNAL SIGQUIT
+# STOPSIGNAL SIGQUIT
 
 CMD ["nginx", "-g", "daemon off;"]

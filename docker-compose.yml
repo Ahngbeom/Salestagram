@@ -1,36 +1,30 @@
-version: '3.9'
+version: '3'
 
 services:
   redis:
     container_name: redis
-    image: redis:alpine
-    ports:
-      - '6379:6379'
-    networks:
-      - salestagram-networks
+    image: 'redis:alpine'
     restart: unless-stopped
-  nodejs-express:
-    container_name: nodejs-express
+
+  nodejs:
+    container_name: nodejs
     build: ./nodejs
     ports:
       - '8080:8080'
-    networks:
-      - salestagram-networks
+    restart: on-failure
     depends_on:
       - redis
-    restart: on-failure
+    
   nginx:
     container_name: nginx
     build: ./nginx
     ports:
       - '80:80'
-    networks:
-      - salestagram-networks
-    depends_on:
-      # - redis
-      - nodejs-express
     restart: on-failure
+    depends_on:
+      - redis
+      - nodejs
 
-networks:
-  salestagram-networks:
-    driver: bridge
+# networks:
+#   salestagram-networks:
+#     driver: bridge

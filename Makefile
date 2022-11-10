@@ -15,15 +15,12 @@ restart:
 clean: down
 ### Container
 	docker container prune --force
-
 ### Volume
 	docker volume prune --force
-
 ### Network
 	docker network prune --force
-
 ### Image	
-	docker image prune -a --force
+	docker image prune --force
 
 re : clean start
 

@@ -1,14 +1,14 @@
-# FROM node:19
-FROM alpine:latest
+FROM node:alpine
 
-WORKDIR /usr/src/nodejs
+WORKDIR /usr/src/app
 
-COPY package*.json ./
 COPY . .
 
-EXPOSE 8080
+# EXPOSE 8080
 
-RUN apk add --update nodejs npm redis
+# RUN apk add --update nodejs npm redis
 RUN npm install
 
-CMD [ "node", "./bin/www" ]
+CMD [ "npm", "start" ]
+# CMD [ "node", "./bin/www" ]
+# CMD [ "npm", "run", "server" ]
