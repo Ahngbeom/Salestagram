@@ -1,7 +1,7 @@
 function getProductList() {
 	$.ajax({
 		type: "get",
-		url: "/redis/product/list",
+		url: "/product/list",
 		dataType: "JSON",
 		success: function (list) {
 			if (list.length > 0) {
@@ -28,7 +28,7 @@ getProductList();
 $("#productRegistrationSubmitBtn").click(function (e) {
 	$.ajax({
 		type: "POST",
-		url: "/redis/product/registration",
+		url: "/product/registration",
 		data: {
 			name: $("#productRegisterForm input[name='name']").val(),
 			details: $("#productRegisterForm textarea[name='details']").val()
@@ -42,7 +42,7 @@ $("#productRegistrationSubmitBtn").click(function (e) {
 $(document).on('click', ".productRemoveBtn", function (e) {
 	$.ajax({
 		type: "POST",
-		url: "/redis/product/delete",
+		url: "/product/delete",
 		data: {
 			id: $(this).data('product-id')
 		},
