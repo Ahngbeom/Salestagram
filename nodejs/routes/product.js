@@ -9,8 +9,6 @@ const redis_client = redis.createClient({
     // host: 'redis',
     port: 6379
   }
-  // url: "redis://redis:6379",
-  // legacyMode: true
 });
 
 redis_client.on('error', (err) => {
@@ -54,10 +52,11 @@ router.post('/product/registration', async (req, res, next) => {
   console.log(id, req.body);
   await redis_client.hSet('product:id:' + id, 'name', req.body.name);
   await redis_client.hSet('product:id:' + id, 'details', req.body.details);
+  res.json(new Product(id, req.body.name, req.body.details));
   await redis_client.disconnect();
 });
 
-router.post('/product/delete', async (req, res, next) => {
+router.post('/product/remove', async (req, res, next) => {
   await redis_client.connect();
   const id = 'product:id:' + req.body.id;
   console.log(id);
