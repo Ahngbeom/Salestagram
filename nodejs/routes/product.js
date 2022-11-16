@@ -4,65 +4,80 @@ var router = express.Router();
 const redis = require('redis');
 // const redis_client = redis.createClient();
 const redis_client = redis.createClient({
-  socket: {
-    host: 'localhost',
-    // host: 'redis',
-    port: 6379
-  }
+	socket: {
+		host: 'localhost',
+		// host: 'redis',
+		port: 6379
+	}
 });
 
 redis_client.on('error', (err) => {
-  console.log(`Error ${err}`)
+	console.log(`Error ${err}`)
 })
 
 class Product {
-  constructor(id, name, details) {
-    this.id = id;
-    this.name = name;
-    this.details = details;
-  }
+	constructor(id, name, details, views) {
+		this.id = id;
+		this.name = name;
+		this.details = details;
+		this.views = views;
+	}
 }
 
 /* GET home page. */
 router.get('/', async (req, res, next) => {
-  res.render('index', { title: 'Salestagram' });
+	res.render('index', { title: 'Salestagram' });
 });
 
 router.get('/product/list', async (req, res, next) => {
-  await redis_client.connect();
-  let list = [];
-  const product_keys = await redis_client.KEYS('product:id:*');
-  // console.log(product_keys);
-  // console.log("is Array? ", Array.isArray(product_keys));
-  // console.log(product_keys.length);
-  if (product_keys.length > 0) {
-    for (const id of product_keys) {
-      const product_info = await redis_client.HGETALL(id);
-      list.push(new Product(id.split(':')[2], product_info.name, product_info.details));
-    }
-  }
-  console.log(list);
-  res.json(list)
-  await redis_client.disconnect();
+	await redis_client.connect();
+	let list = [];
+	const product_keys = await redis_client.KEYS('product:id:*');
+	// console.log(product_keys);
+	// console.log("is Array? ", Array.isArray(product_keys));
+	// console.log(product_keys.length);
+	if (product_keys.length > 0) {
+		for (const id of product_keys) {
+			const product_info = await redis_client.HGETALL(id);
+			list.push(new Product(id.split(':')[2], product_info.name, product_info.details, product_info.views));
+		}
+	}
+	console.log(list);
+	res.json(list)
+	await redis_client.disconnect();
 });
 
 router.post('/product/registration', async (req, res, next) => {
-  await redis_client.connect();
-  const id = await redis_client.incr('product:index:1');
-  console.log(id, req.body);
-  await redis_client.hSet('product:id:' + id, 'name', req.body.name);
-  await redis_client.hSet('product:id:' + id, 'details', req.body.details);
-  res.json(new Product(id, req.body.name, req.body.details));
-  await redis_client.disconnect();
+	await redis_client.connect();
+	const id = await redis_client.incr('product:index:1');
+	// console.log(id, req.body);
+	await redis_client.hSet('product:id:' + id, 'name', req.body.name);
+	await redis_client.hSet('product:id:' + id, 'details', req.body.details);
+	await redis_client.hSet('product:id:' + id, 'views', 0);
+	await redis_client.disconnect();
+	res.json(new Product(id, req.body.name, req.body.details, 0));
 });
 
 router.post('/product/remove', async (req, res, next) => {
-  await redis_client.connect();
-  const id = 'product:id:' + req.body.id;
-  console.log(id);
-  console.log(await redis_client.HKEYS(id));
-  await redis_client.HDEL(id, await redis_client.HKEYS(id))
-  await redis_client.disconnect();
+	await redis_client.connect();
+	const id = 'product:id:' + req.body.id;
+	console.log(id);
+	console.log(await redis_client.HKEYS(id));
+	await redis_client.HDEL(id, await redis_client.HKEYS(id));
+	await redis_client.disconnect();
+	res.json(id);
+
 });
+
+router.post('/product/modify', async (req, res, next) => {
+	await redis_client.connect();
+	console.log(req.body);
+	const id = req.body.id;
+	await redis_client.hSet('product:id:' + id, 'name', req.body.name);
+	await redis_client.hSet('product:id:' + id, 'details', req.body.details);
+	await redis_client.disconnect();
+	res.json(id);
+});
+
 
 module.exports = router;

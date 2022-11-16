@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 
 import axios from 'axios';
 
@@ -21,12 +21,18 @@ async function getProductList({ setProducts }) {
 	return response;
 }
 
+function IncreaseViews(product_id) {
+
+	console.log(product_id);
+}
+
+
 function ProductList({ productList, setProductList }) {
 
 	return (
 		<ListGroup as="ol">
 			{productList.map((item) => (
-				<ListGroup.Item key={item.id} as="li" action="true" id={item.id}>
+				<ListGroup.Item key={item.id} as="li" action="true" id={item.id} onClick={() => IncreaseViews(item.id)}>
 					<div className='d-flex justify-content-between align-items-start'>
 						<div className="ms-2 me-auto">
 							<Badge bg="secondary" pill>
@@ -36,7 +42,7 @@ function ProductList({ productList, setProductList }) {
 							{item.details}
 						</div>
 						<Badge bg="primary" pill>
-							?
+							{item.views}
 						</Badge>
 					</div>
 					<div className='d-flex justify-content-end align-items-start gx-5'>
