@@ -16,11 +16,22 @@ redis_client.on('error', (err) => {
 })
 
 class Product {
-	constructor(id, name, details, views) {
+	constructor(id, name, details) {
 		this.id = id;
 		this.name = name;
 		this.details = details;
-		this.views = views;
+		this.views = 0;
+		const today = new Date();
+		this.regist_date = today.toJSON();
+		this.update_date = today.toJSON();
+	}
+
+	static byRedis(id, product_info) {
+		let product = new Product(id, product_info.name, product_info.details);
+		product.views = product_info.views;
+		product.regist_date = product_info.regist_date;
+		product.update_date = product_info.update_date;
+		return product;
 	}
 }
 
@@ -38,8 +49,7 @@ router.get('/product/list', async (req, res, next) => {
 	// console.log(product_keys.length);
 	if (product_keys.length > 0) {
 		for (const id of product_keys) {
-			const product_info = await redis_client.HGETALL(id);
-			list.push(new Product(id.split(':')[2], product_info.name, product_info.details, product_info.views));
+			list.push(Product.byRedis(id, await redis_client.HGETALL(id)));
 		}
 	}
 	console.log(list);
@@ -51,16 +61,19 @@ router.post('/product/registration', async (req, res, next) => {
 	await redis_client.connect();
 	const id = await redis_client.incr('product:index:1');
 	// console.log(id, req.body);
-	await redis_client.hSet('product:id:' + id, 'name', req.body.name);
-	await redis_client.hSet('product:id:' + id, 'details', req.body.details);
-	await redis_client.hSet('product:id:' + id, 'views', 0);
+	const newProduct = new Product(id, req.body.name, req.body.details);
+	await redis_client.hSet('product:id:' + newProduct.id, 'name', newProduct.name);
+	await redis_client.hSet('product:id:' + newProduct.id, 'details', newProduct.details);
+	await redis_client.hSet('product:id:' + newProduct.id, 'views', newProduct.views);
+	await redis_client.hSet('product:id:' + newProduct.id, 'regist_date', newProduct.regist_date);
+	await redis_client.hSet('product:id:' + newProduct.id, 'update_date', newProduct.update_date);
 	await redis_client.disconnect();
-	res.json(new Product(id, req.body.name, req.body.details, 0));
+	res.json(newProduct);
 });
 
 router.post('/product/remove', async (req, res, next) => {
 	await redis_client.connect();
-	const id = 'product:id:' + req.body.id;
+	const id = req.body.id;
 	console.log(id);
 	console.log(await redis_client.HKEYS(id));
 	await redis_client.HDEL(id, await redis_client.HKEYS(id));

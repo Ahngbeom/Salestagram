@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-    "__start": "node ./bin/www",
-    "__server": "nodemon ./bin/www"
+    "__start": "redis-server 2>&1 & nodemon ./bin/www",
+    "__build": "node ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
