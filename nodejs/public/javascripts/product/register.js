@@ -1,9 +1,6 @@
 $("#productRegistrationSubmitBtn").click(function (e) {
 
-	// const today = new Date();
-	// console.log(today.toJSON());
-	// console.log(new Date(today.toJSON()));
-	// console.log(today.toLocaleString());
+	$(".overlay").toggleClass('visually-hidden');
 
 	$.ajax({
 		type: "POST",
@@ -12,11 +9,15 @@ $("#productRegistrationSubmitBtn").click(function (e) {
 			name: $("#productRegisterForm input[name='name']").val(),
 			details: $("#productRegisterForm textarea[name='details']").val()
 		},
-		success: function (data) {
+		success: async function (data) {
 			console.log(data);
 			$("#productRegisterForm input[name='name']").val('');
 			$("#productRegisterForm textarea[name='details']").val('');
-			getProductList();
+			await getProductList();
+			setTimeout(function () {
+				$(".overlay").toggleClass('visually-hidden');
+			}, 1000);
 		}
 	});
+
 });

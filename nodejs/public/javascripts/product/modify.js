@@ -35,7 +35,6 @@ function SetLayoutForProductModify(e) {
 	$("#productModificationSubmitBtn").one('click', (event) => {
 		product.name = $("#productModifyForm input[name='name']").val();
 		product.details = $("#productModifyForm textarea[name='details']").val();
-
 		console.log(product);
 
 		$.ajax({

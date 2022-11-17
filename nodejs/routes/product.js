@@ -53,8 +53,20 @@ router.get('/product/list', async (req, res, next) => {
 		}
 	}
 	console.log(list);
+	list.sort(function (a, b) {
+		return new Date(b.update_date) - new Date(a.update_date);
+	});
 	res.json(list)
 	await redis_client.disconnect();
+});
+
+router.get('/product/info', async (req, res, next) => {
+	await redis_client.connect();
+	const id = req.body.id;
+	console.log(req.body);
+	console.log(await redis_client.hGetAll(id));
+	await redis_client.disconnect();
+	res.json(id);
 });
 
 router.post('/product/registration', async (req, res, next) => {
@@ -86,8 +98,10 @@ router.post('/product/modify', async (req, res, next) => {
 	await redis_client.connect();
 	console.log(req.body);
 	const id = req.body.id;
-	await redis_client.hSet('product:id:' + id, 'name', req.body.name);
-	await redis_client.hSet('product:id:' + id, 'details', req.body.details);
+	await redis_client.hSet(id, 'name', req.body.name);
+	await redis_client.hSet(id, 'details', req.body.details);
+	const today = new Date();
+	await redis_client.hSet(id, 'update_date', today.toJSON());
 	await redis_client.disconnect();
 	res.json(id);
 });
