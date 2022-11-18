@@ -30,7 +30,10 @@ function SetLayoutForProductModify(e) {
 	$("#productModifyForm input[name='name']").val(originProductName);
 	$("#productModifyForm textarea[name='details']").val(originProductDetails !== '내용 없음' ? originProductDetails : '');
 
-	$("#returnToList").one('click', () => { SetLayoutForProductModify(e) });
+	$("#returnToList").one('click', () => {
+		productFormToggler();
+		getProductList();
+	});
 
 	$("#productModificationSubmitBtn").one('click', (event) => {
 		product.name = $("#productModifyForm input[name='name']").val();

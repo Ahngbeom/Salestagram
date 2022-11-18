@@ -1,0 +1,21 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "start",
+			"path": "nodejs",
+			"problemMatcher": [],
+			"label": "npm: start - nodejs",
+			"detail": "nodemon ./bin/www"
+		},
+		{
+			"type": "npm",
+			"script": "redis",
+			"path": "nodejs",
+			"problemMatcher": [],
+			"label": "npm: redis - nodejs",
+			"detail": "redis-server"
+		}
+	]
+}

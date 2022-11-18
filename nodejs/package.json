@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
+    "redis": "redis-server",
     "__start": "redis-server 2>&1 & nodemon ./bin/www",
     "__build": "node ./bin/www"
   },

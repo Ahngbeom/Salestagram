@@ -9,7 +9,7 @@ function getProductList() {
 		success: function (list) {
 			if (list.length > 0) {
 				$("#product-list-area").removeClass("text-center");
-				$("#product-list-area").html(createBootstrapListGroup(list));
+				$("#product-list-area").html(createBootstrapCard(list));
 			} else {
 				$("#product-list-area").addClass("text-center");
 				$("#product-list-area").html("상품 없음");
@@ -19,29 +19,81 @@ function getProductList() {
 	return;
 }
 
-// $(document).on('click', "#product-list-area .list-group-item", (e) => {
-// 	const productListElem = $(e.target).parents('li').length == 0 ? $(e.target) : $(e.target).parents('li');
-// 	const id = $(productListElem.get()).data('product-id');
-// 	console.log(id);
+function createBootstrapCarousel(images) {
 
-// 	$.ajax({
-// 		type: 'GET',
-// 		url: "/product/info",
-// 		data: { id: id },
-// 		success: function (data) {
-// 			console.log(data);
-// 		},
-// 		error: function (xhr) {
-// 			console.error(xhr);
-// 		}
-// 	})
-// });
+	let carousel = "<div id=\"carouselExampleIndicators\" class=\"carousel slide\" data-bs-ride=\"true\">";
+
+	let indicatorsBtns = "<div class=\"carousel-indicators\">";
+	let carouselItem = "<div class=\"carousel-inner\">";
+	images.forEach((image, index) => {
+		if (index === 0) {
+			indicatorsBtns += "<button type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide-to=\"" + index + "\" class=\"active\" aria-current=\"true\" aria-label=\"Slide " + (index + 1) + "\"></button>";
+			carouselItem += "<div class=\"carousel-item active\">";
+		} else {
+			indicatorsBtns += "<button type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide-to=\"" + index + "\" aria-label=\"Slide " + (index + 1) + "\"></button>";
+			carouselItem += "<div class=\"carousel-item\">";
+		}
+
+		carouselItem += "<img src=\"" + image.src + "\" class=\"d-block w-100\" alt=\"상품 이미지 없음\">" +
+			"</div>";
+	});
+	indicatorsBtns += "</div>";
+	carouselItem += "</div>";
+	carousel += indicatorsBtns + carouselItem +
+		"<button class=\"carousel-control-prev\" type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide=\"prev\">" +
+		"<span class=\"carousel-control-prev-icon\" aria-hidden=\"true\">" + "</span>" +
+		"<span class=\"visually-hidden\">Previous</span>" +
+		"</button>" +
+		"<button class=\"carousel-control-next\" type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide=\"next\">" +
+		"<span class=\"carousel-control-next-icon\" aria-hidden=\"true\">" + "</span>" +
+		"<span class=\"visually-hidden\">Next</span>" +
+		"</button>" +
+		"</div>";
+	return carousel;
+}
+
+function createBootstrapCard(list) {
+
+	let li = "";
+
+	const today = new Date();
+	list.forEach((product, index) => {
+		const regist_date = new Date(product.regist_date);
+		const update_date = new Date(product.update_date);
+
+		li += "<div class=\"card w-100\">" +
+			createBootstrapCarousel(JSON.parse(product.images)) +
+			"<div class=\"card-body\">" +
+			"<h5 class=\"card-title\">" + product.name + "</h5>" +
+			"<p class=\"card-text\">" + product.details + "</p>" +
+			"<div class=\"d-flex flex-column align-items-end mb-3\">" +
+			"<p class=\"fw-light fst-italic m-0\">등록일자: " + regist_date.toLocaleString() + "</p>" +
+			(regist_date.getTime() === update_date.getTime() ? '' : "<p class=\"fw-light fst-italic m-0\">" + dateTimeDiff(update_date, today) + "</p>") +
+			"</div>" +
+			"</div>" +
+			"<div class=\"card-footer d-flex justify-content-between align-items-center\">" +
+			"<div class=\"d-flex gap-3 align-items-center\">" +
+			"<span class=\"badge bg-primary rounded-pill\">" + product.views + "</span>" +
+			"<button type='button' class='btn p-0'>👍</button>" + 
+			"<button type='button' class='btn p-0'>👎</button>" + 
+			"</div>" +
+			"<div>" +
+			"<button type='button' class='btn btn-link link-warning productModifyBtn' data-product-id='" + product.id + "'>수정</button>" +
+			"<button type='button' class='btn btn-link link-danger productRemoveBtn' data-product-id='" + product.id + "'>삭제</button>" +
+			"</div>" +
+			"</div>" +
+			"</div>";
+	});
+
+	return li;
+}
 
 function createBootstrapListGroup(list) {
 
 	let li = "";
 
 	list.forEach(product => {
+
 		const today = new Date();
 		const regist_date = new Date(product.regist_date);
 		const update_date = new Date(product.update_date);
@@ -50,8 +102,9 @@ function createBootstrapListGroup(list) {
 			"<div class='d-flex justify-content-between align-items-start'>" +
 			"<p class=\"fw-light fst-italic\">" + product.id + "</p>" +
 			"<span class=\"badge bg-primary rounded-pill\">" + product.views + "</span>" +
-			"</div>" +
-			"<div class=\"mb-2\">" +
+			"</div>";
+		li += createBootstrapCarousel(JSON.parse(product.images));
+		li += "<div class=\"mb-2\">" +
 			"<div class=\"row\">" +
 			"<label class=\"col-4 col-form-label\">상품명: </label>" +
 			"<div class=\"col-8\">" +
@@ -67,7 +120,7 @@ function createBootstrapListGroup(list) {
 			"</div>" +
 			"<div class=\"d-flex flex-column align-items-end mb-3\">" +
 			"<p class=\"fw-light fst-italic m-0\">등록일자: " + regist_date.toLocaleString() + "</p>" +
-			"<p class=\"fw-light fst-italic m-0\">" + dateTimeDiff(update_date, today) + "</p>" +
+			(regist_date.getTime() === update_date.getTime() ? '' : "<p class=\"fw-light fst-italic m-0\">" + dateTimeDiff(update_date, today) + "</p>") +
 			"</div>" +
 			"<div class=\"d-grid gap-2 d-flex justify-content-end\">" +
 			"<button type='button' class='btn btn-link link-warning productModifyBtn' data-product-id='" + product.id + "'>수정</button>" +
@@ -108,4 +161,5 @@ function dateTimeDiff(startDate, endDate) {
 	if (dateTimeJSON.seconds != 0) {
 		return dateTimeJSON.seconds + "초 전 수정됨";
 	}
+	return "방금 전 수정됨";
 }

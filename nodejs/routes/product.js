@@ -16,10 +16,11 @@ redis_client.on('error', (err) => {
 })
 
 class Product {
-	constructor(id, name, details) {
+	constructor(id, name, details, images) {
 		this.id = id;
 		this.name = name;
 		this.details = details;
+		this.images = images
 		this.views = 0;
 		const today = new Date();
 		this.regist_date = today.toJSON();
@@ -27,12 +28,13 @@ class Product {
 	}
 
 	static byRedis(id, product_info) {
-		let product = new Product(id, product_info.name, product_info.details);
+		let product = new Product(id, product_info.name, product_info.details, product_info.images);
 		product.views = product_info.views;
 		product.regist_date = product_info.regist_date;
 		product.update_date = product_info.update_date;
 		return product;
 	}
+
 }
 
 /* GET home page. */
@@ -52,11 +54,13 @@ router.get('/product/list', async (req, res, next) => {
 			list.push(Product.byRedis(id, await redis_client.HGETALL(id)));
 		}
 	}
-	console.log(list);
 	list.sort(function (a, b) {
 		return new Date(b.update_date) - new Date(a.update_date);
 	});
-	res.json(list)
+	list.forEach((product) => {
+		console.log(product.id, product.name);
+	});
+	res.json(list);
 	await redis_client.disconnect();
 });
 
@@ -71,14 +75,17 @@ router.get('/product/info', async (req, res, next) => {
 
 router.post('/product/registration', async (req, res, next) => {
 	await redis_client.connect();
-	const id = await redis_client.incr('product:index:1');
-	// console.log(id, req.body);
-	const newProduct = new Product(id, req.body.name, req.body.details);
-	await redis_client.hSet('product:id:' + newProduct.id, 'name', newProduct.name);
-	await redis_client.hSet('product:id:' + newProduct.id, 'details', newProduct.details);
-	await redis_client.hSet('product:id:' + newProduct.id, 'views', newProduct.views);
-	await redis_client.hSet('product:id:' + newProduct.id, 'regist_date', newProduct.regist_date);
-	await redis_client.hSet('product:id:' + newProduct.id, 'update_date', newProduct.update_date);
+	let id = await redis_client.incr('product:index:1');
+	id = 'product:id:' + id;
+	console.log(id, req.body);
+	const newProduct = new Product(id, req.body.name, req.body.details, req.body.images);
+	console.log(newProduct);
+	await redis_client.hSet(id, 'name', newProduct.name);
+	await redis_client.hSet(id, 'details', newProduct.details);
+	await redis_client.hSet(id, 'views', newProduct.views);
+	await redis_client.hSet(id, 'images', JSON.stringify(newProduct.images));
+	await redis_client.hSet(id, 'regist_date', newProduct.regist_date);
+	await redis_client.hSet(id, 'update_date', newProduct.update_date);
 	await redis_client.disconnect();
 	res.json(newProduct);
 });
