@@ -21,7 +21,7 @@ function getProductList() {
 
 function createBootstrapCarousel(images) {
 
-	let carousel = "<div id=\"carouselExampleIndicators\" class=\"carousel slide\" data-bs-ride=\"true\">";
+	let carousel = "<div id=\"carouselExampleIndicators\" class=\"carousel slide p-1\" data-bs-ride=\"false\">";
 
 	let indicatorsBtns = "<div class=\"carousel-indicators\">";
 	let carouselItem = "<div class=\"carousel-inner\">";
@@ -34,7 +34,7 @@ function createBootstrapCarousel(images) {
 			carouselItem += "<div class=\"carousel-item\">";
 		}
 
-		carouselItem += "<img src=\"" + image.src + "\" class=\"d-block w-100\" alt=\"상품 이미지 없음\">" +
+		carouselItem += "<img src=\"" + image.src + "\" class=\"img-fluid d-block w-100 pb-3\" alt=\"상품 이미지 없음\">" +
 			"</div>";
 	});
 	indicatorsBtns += "</div>";
@@ -61,7 +61,7 @@ function createBootstrapCard(list) {
 		const regist_date = new Date(product.regist_date);
 		const update_date = new Date(product.update_date);
 
-		li += "<div class=\"card w-100\">" +
+		li += "<div class=\"card w-100\" data-product-id='" + product.id + "'>" +
 			createBootstrapCarousel(JSON.parse(product.images)) +
 			"<div class=\"card-body\">" +
 			"<h5 class=\"card-title\">" + product.name + "</h5>" +
@@ -73,9 +73,22 @@ function createBootstrapCard(list) {
 			"</div>" +
 			"<div class=\"card-footer d-flex justify-content-between align-items-center\">" +
 			"<div class=\"d-flex gap-3 align-items-center\">" +
-			"<span class=\"badge bg-primary rounded-pill\">" + product.views + "</span>" +
-			"<button type='button' class='btn p-0'>👍</button>" + 
-			"<button type='button' class='btn p-0'>👎</button>" + 
+			
+			"<button type='button' class='btn p-0 product-like-btn'>" +
+			"<span><small>" + product.like + "</small></span>" +
+			"❤" +
+			"</button>" +
+			
+			"<button type='button' class='btn p-0'>" + 
+			"<span><small></small></span>" +
+			"⭐" + 
+			"</button>" +
+
+			"<button type='button' class='btn p-0'>" +
+			"<span><small></small></span>" +
+			"🛒" +
+			"</button>" +
+
 			"</div>" +
 			"<div>" +
 			"<button type='button' class='btn btn-link link-warning productModifyBtn' data-product-id='" + product.id + "'>수정</button>" +

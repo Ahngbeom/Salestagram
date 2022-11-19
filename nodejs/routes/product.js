@@ -22,6 +22,7 @@ class Product {
 		this.details = details;
 		this.images = images
 		this.views = 0;
+		this.like = 0;
 		const today = new Date();
 		this.regist_date = today.toJSON();
 		this.update_date = today.toJSON();
@@ -30,6 +31,7 @@ class Product {
 	static byRedis(id, product_info) {
 		let product = new Product(id, product_info.name, product_info.details, product_info.images);
 		product.views = product_info.views;
+		product.like = product_info.like;
 		product.regist_date = product_info.regist_date;
 		product.update_date = product_info.update_date;
 		return product;
@@ -111,6 +113,13 @@ router.post('/product/modify', async (req, res, next) => {
 	await redis_client.hSet(id, 'update_date', today.toJSON());
 	await redis_client.disconnect();
 	res.json(id);
+});
+
+router.post('/product/like/increase', async (req, res, next) => {
+	await redis_client.connect();
+	const id = req.body.id;
+	res.json(await redis_client.hIncrBy(id, 'like', 1));
+	await redis_client.disconnect();
 });
 
 
