@@ -1,7 +1,7 @@
-$(document).on('click', ".productRemoveBtn", function (e) {
+$(document).on('click', ".productRemoveBtn", function () {
 	$.ajax({
 		type: "POST",
-		url: "/product/remove",
+		url: "/api/product/remove",
 		data: {
 			id: $(this).data('product-id')
 		},

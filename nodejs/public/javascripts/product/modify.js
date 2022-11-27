@@ -1,9 +1,30 @@
+const productModificationSubmitBtn = $("#productModificationSubmitBtn");
+
 function productFormToggler() {
-	$("#productRegisterForm").toggleClass('visually-hidden');
-	$("#productModifyForm").toggleClass('visually-hidden');
+	$("#productModifyForm").collapse("toggle");
+}
+
+function getProductInfo(id) {
+	console.log(id);
+	$.ajax({
+		type: 'get',
+		url: '/api/product/info',
+		data: {
+			id: id
+		},
+		dataType: 'JSON',
+		success: function(data) {
+			console.log(data);
+		},
+		error: function(xhr) {
+			console.error(xhr);
+		}
+	})
 }
 
 function SetLayoutForProductModify(e) {
+
+	getProductInfo($(e.target).data('product-id'));
 
 	let product = {
 		id: $(e.target).data('product-id'),
@@ -11,9 +32,9 @@ function SetLayoutForProductModify(e) {
 		details: ''
 	}
 
-	const targetProductListItem = $(e.target.parentElement.parentElement);
+	const targetProductListItem = $(e.target.parentElement.parentElement.parentElement);
 
-	targetProductListItem.toggleClass('border border-warning');
+	targetProductListItem.toggleClass('border border-5 border-warning');
 
 	productFormToggler();
 
@@ -24,8 +45,8 @@ function SetLayoutForProductModify(e) {
 		}
 	});
 
-	const originProductName = $(targetProductListItem).find("input[name='name'").val();
-	const originProductDetails = $(targetProductListItem).find("input[name='details'").val();
+	const originProductName = $(targetProductListItem).find("input[name='name']").val();
+	const originProductDetails = $(targetProductListItem).find("input[name='details']").val();
 
 	$("#productModifyForm input[name='name']").val(originProductName);
 	$("#productModifyForm textarea[name='details']").val(originProductDetails !== '내용 없음' ? originProductDetails : '');
@@ -35,7 +56,7 @@ function SetLayoutForProductModify(e) {
 		getProductList();
 	});
 
-	$("#productModificationSubmitBtn").one('click', (event) => {
+	productModificationSubmitBtn.one('click', () => {
 		product.name = $("#productModifyForm input[name='name']").val();
 		product.details = $("#productModifyForm textarea[name='details']").val();
 		console.log(product);
@@ -55,7 +76,5 @@ function SetLayoutForProductModify(e) {
 		});
 	});
 }
-
-
 
 $(document).on('click', ".productModifyBtn", SetLayoutForProductModify);

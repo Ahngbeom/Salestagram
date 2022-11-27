@@ -1,3 +1,15 @@
+// const Editor = toastui.Editor;
+
+// const editor = new Editor({
+// 	el: document.querySelector('#editor'),
+// 	height: '200px',
+// 	initialEditType: 'markdown',
+// 	previewStyle: 'vertical',
+// 	language: 'ko-KR'
+// });
+
+// editor.getHTML()
+
 $("#productRegiserFormFile").on('change', (e) => {
 	$("#productRegiserFormFilePreview").html('');
 
@@ -7,8 +19,9 @@ $("#productRegiserFormFile").on('change', (e) => {
 		let reader = new FileReader();
 		reader.onload = function () {
 			let imageTag = new Image();
-			imageTag.height = 100;
+			// imageTag.height = 100;
 			imageTag.title = file.name;
+			imageTag.classList.add('img-fluid', 'mb-1');
 			imageTag.src = this.result;
 			$("#productRegiserFormFilePreview").append(imageTag);
 		};
@@ -25,7 +38,10 @@ $("#productRegiserFormFile").on('change', (e) => {
 	}
 });
 
-$("#productRegistrationSubmitBtn").click(function (e) {
+
+$("#productRegistrationSubmitBtn").click(function () {
+
+	const bsCollapse = new bootstrap.Collapse('#collapseProductRegister');
 
 	// console.log($("#productRegiserFormFile")[0].files);
 
@@ -42,8 +58,8 @@ $("#productRegistrationSubmitBtn").click(function (e) {
 	// }
 
 	const product = {
-		name: $("#productRegisterForm input[name='name']").val(),
-		details: $("#productRegisterForm textarea[name='details']").val(),
+		name: $("#collapseProductRegister input[name='name']").val(),
+		details: $("#collapseProductRegister textarea[name='details']").val(),
 		images: []
 	}
 
@@ -56,14 +72,12 @@ $("#productRegistrationSubmitBtn").click(function (e) {
 
 	$.ajax({
 		type: "POST",
-		url: "/product/registration",
-		// processData: false,
+		url: "/api/product/registration",
 		data: {
 			name: product.name,
 			details: product.details,
 			images: product.images
 		},
-		// data: formData,
 		success: async function (data) {
 			console.log(data);
 			$("#productRegisterForm input[name='name']").val('');
@@ -71,7 +85,9 @@ $("#productRegistrationSubmitBtn").click(function (e) {
 			await getProductList();
 			setTimeout(function () {
 				$(".overlay").toggleClass('visually-hidden');
+				bsCollapse.hide();
 			}, 500);
+			
 		}
 	});
 

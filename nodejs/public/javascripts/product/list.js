@@ -1,25 +1,30 @@
+const productListAreaElem = $("#product-list-area");
+
 getProductList();
+
 
 function getProductList() {
 	$.ajax({
 		type: "get",
-		url: "/product/list",
+		url: "/api/product/list",
 		async: false,
 		dataType: "JSON",
 		success: function (list) {
 			if (list.length > 0) {
-				$("#product-list-area").removeClass("text-center");
-				$("#product-list-area").html(createBootstrapCard(list));
+				productListAreaElem.removeClass("text-center");
+				productListAreaElem.html(createBootstrapCard(list));
 			} else {
-				$("#product-list-area").addClass("text-center");
-				$("#product-list-area").html("상품 없음");
+				productListAreaElem.addClass("text-center");
+				productListAreaElem.html("상품 없음");
 			}
 		}
 	});
-	return;
 }
 
 function createBootstrapCarousel(images) {
+
+	if (images === null)
+		return;
 
 	let carousel = "<div id=\"carouselExampleIndicators\" class=\"carousel slide p-1\" data-bs-ride=\"false\">";
 
@@ -57,8 +62,8 @@ function createBootstrapCard(list) {
 	let li = "";
 
 	const today = new Date();
-	list.forEach((product, index) => {
-		const regist_date = new Date(product.regist_date);
+	list.forEach((product) => {
+		const registry_date = new Date(product.regist_date);
 		const update_date = new Date(product.update_date);
 
 		li += "<div class=\"card w-100\" data-product-id='" + product.id + "'>" +
@@ -67,8 +72,8 @@ function createBootstrapCard(list) {
 			"<h5 class=\"card-title\">" + product.name + "</h5>" +
 			"<p class=\"card-text\">" + product.details + "</p>" +
 			"<div class=\"d-flex flex-column align-items-end mb-3\">" +
-			"<p class=\"fw-light fst-italic m-0\">등록일자: " + regist_date.toLocaleString() + "</p>" +
-			(regist_date.getTime() === update_date.getTime() ? '' : "<p class=\"fw-light fst-italic m-0\">" + dateTimeDiff(update_date, today) + "</p>") +
+			"<p class=\"fw-light fst-italic m-0\">등록일자: " + registry_date.toLocaleString() + "</p>" +
+			(registry_date.getTime() === update_date.getTime() ? '' : "<p class=\"fw-light fst-italic m-0\">" + dateTimeDiff(update_date, today) + "</p>") +
 			"</div>" +
 			"</div>" +
 			"<div class=\"card-footer d-flex justify-content-between align-items-center\">" +
@@ -156,22 +161,22 @@ function dateTimeDiff(startDate, endDate) {
 		seconds: Math.floor((endDate.getSeconds() - startDate.getSeconds()))
 	}
 
-	if (dateTimeJSON.year != 0) {
+	if (dateTimeJSON.year !== 0) {
 		return dateTimeJSON.year + "년 전 수정됨";
 	}
-	if (dateTimeJSON.month != 0) {
+	if (dateTimeJSON.month !== 0) {
 		return dateTimeJSON.month + "개월 전 수정됨";
 	}
-	if (dateTimeJSON.day != 0) {
+	if (dateTimeJSON.day !== 0) {
 		return dateTimeJSON.day + "일 전 수정됨";
 	}
-	if (dateTimeJSON.hours != 0) {
+	if (dateTimeJSON.hours !== 0) {
 		return dateTimeJSON.hours + "시간 전 수정됨";
 	}
-	if (dateTimeJSON.minute != 0) {
+	if (dateTimeJSON.minute !== 0) {
 		return dateTimeJSON.minute + "분 전 수정됨";
 	}
-	if (dateTimeJSON.seconds != 0) {
+	if (dateTimeJSON.seconds !== 0) {
 		return dateTimeJSON.seconds + "초 전 수정됨";
 	}
 	return "방금 전 수정됨";

@@ -9,6 +9,7 @@
     "__build": "node ./bin/www"
   },
   "dependencies": {
+    "@toast-ui/editor": "^3.2.1",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "create-react-app": "^5.0.1",
