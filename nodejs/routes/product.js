@@ -1,89 +1,108 @@
 const express = require('express');
 const router = express.Router();
 
-const redis = require('redis');
-const redis_client = redis.createClient({
-	socket: {
-		host: 'localhost',
-		// host: 'redis',
-		port: 6379
-	}
+// const Product = require('../class/product.js');
+// var product = new Product();
+
+const {MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
+const uri = "mongodb+srv://ahngbeom:1234@salestagram-cluster.poarys6.mongodb.net/?retryWrites=true&w=majority";
+const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1});
+const db = client.db("salestagram");
+const products_collection = db.collection("products");
+const productImages_collection = db.collection("product_images");
+
+const fs = require('fs');
+const multer = require('multer');
+let storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './public/images')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now() + '.jpeg')
+    }
 });
 
-redis_client.on('error', (err) => {
-	console.log(`Error ${err}`)
-});
+let upload = multer({ storage: storage });
 
 /* GET home page. */
 router.get('/', async (req, res, next) => {
-	res.render('index', { title: 'Salestagram' });
+    res.render('index', {title: 'Salestagram'});
 });
 
 router.get('/product/register', async (req, res, next) => {
-	res.render('product/register', { title: 'Salestagram - Register' });
+    res.render('product/register', {title: 'Salestagram - Register'});
 });
 
-const Product = require('../class/product.js');
-// var product = new Product();
-
 router.get('/api/product/list', async (req, res, next) => {
-	res.json(await Product.getAll());
+    await client.connect();
+    let list = [];
+    const cursor = await products_collection.find();
+    await cursor.forEach((product) => {
+        // console.log(product._id, product.name);
+        list.push(product);
+    });
+    await client.close();
+    list.sort((a, b) => {
+        return b.update_date - a.update_date;
+    });
+    // console.log(list);
+    res.json(list);
 });
 
 router.get('/api/product/info', async (req, res, next) => {
-	const id = req.query.id;
-	const product = await Product.get(id);
-	console.log(product);
-	res.json(product);
+    await client.connect();
+    const result = await products_collection.findOne({_id: ObjectId(req.query.id)});
+    await client.close();
+    res.json(result);
 });
 
-router.post('/api/product/registration', async (req, res, next) => {
-	await redis_client.connect();
-	let id = await redis_client.incr('product:index:1');
-	id = 'product:id:' + id;
-	console.log(id, req.body.name);
-	const newProduct = new Product(id, req.body.name, req.body.details, req.body.images);
-	console.log(newProduct);
-	await redis_client.hSet(id, 'name', newProduct.name);
-	await redis_client.hSet(id, 'details', newProduct.details);
-	await redis_client.hSet(id, 'views', newProduct.views);
-	await redis_client.hSet(id, 'like', newProduct.like);
-	await redis_client.hSet(id, 'images', JSON.stringify(newProduct.images));
-	await redis_client.hSet(id, 'regist_date', newProduct.regist_date);
-	await redis_client.hSet(id, 'update_date', newProduct.update_date);
-	await redis_client.disconnect();
-	res.json(newProduct);
+router.post('/api/product/registration', upload.array('images'), async (req, res, next) => {
+    // await client.connect();
+    console.log(req.body);
+    console.log(req.files);
+    // const result = await collection.insertOne({
+    //     name: req.body.name,
+    //     details: req.body.details,
+    //     images: req.body.images,
+    //     views: 0,
+    //     like: 0,
+    //     registration_date: Date.now(),
+    //     update_date: Date.now()
+    // });
+    // await client.close();
+    // res.json(result.insertedId);
 });
 
 router.post('/api/product/remove', async (req, res, next) => {
-	await redis_client.connect();
-	const id = req.body.id;
-	console.log(id);
-	console.log(await redis_client.HKEYS(id));
-	await redis_client.HDEL(id, await redis_client.HKEYS(id));
-	await redis_client.disconnect();
-	res.json(id);
-
+    await client.connect();
+    const id = req.body.id;
+    console.log(id);
+    await products_collection.findOneAndDelete({_id: ObjectId(id)});
+    await client.close();
+    res.json(id);
 });
 
 router.post('/api/product/modify', async (req, res, next) => {
-	await redis_client.connect();
-	console.log(req.body);
-	const id = req.body.id;
-	await redis_client.hSet(id, 'name', req.body.name);
-	await redis_client.hSet(id, 'details', req.body.details);
-	const today = new Date();
-	await redis_client.hSet(id, 'update_date', today.toJSON());
-	await redis_client.disconnect();
-	res.json(id);
+    await client.connect();
+    console.log(products_collection.findOne({_id: req.body.id}));
+    const result = await products_collection.findOneAndUpdate({_id: req.body.id}, {
+        $set: {
+            name: req.body.name,
+            details: req.body.details,
+            images: req.body.images,
+            update_date: req.body.update_date
+        }
+    }, {returnDocument: "after"});
+    await client.close();
+    res.json(result);
 });
 
 router.post('/api/product/like/increase', async (req, res, next) => {
-	await redis_client.connect();
-	const id = req.body.id;
-	res.json(await redis_client.hIncrBy(id, 'like', 1));
-	await redis_client.disconnect();
+    await client.connect();
+    console.log(req.body.id);
+    const result = await products_collection.findOneAndUpdate({_id: ObjectId(req.body.id)}, {$inc: {like: 1}}, {returnDocument: "after"});
+    await client.close();
+    res.json(result);
 });
-
 
 module.exports = router;

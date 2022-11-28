@@ -3,7 +3,7 @@ $(document).on('click', ".productRemoveBtn", function () {
 		type: "POST",
 		url: "/api/product/remove",
 		data: {
-			id: $(this).data('product-id')
+			id: $(this).parents('.card').data('product-id')
 		},
 		success: function (data) {
 			console.log("Remove Product [" + data + "]");

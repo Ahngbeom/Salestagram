@@ -3,94 +3,97 @@
 
 <%- include('header'); -%>
 
-	<body>
-		<div class="container mb-5">
-			<h1>
-				<%= title %>
-			</h1>
-			<p>Welcome to <%= title %>
-			</p>
-		</div>
+<body>
+<div class="container mb-5">
+    <h1>
+        <%= title %>
+    </h1>
+    <p>Welcome to <%= title %>
+    </p>
+</div>
 
-		<div class="container d-grid gap-3">
-			<div class="d-flex justify-content-end">
-				<button class="btn btn-primary" type="button" data-bs-toggle="collapse"
-					data-bs-target="#collapseProductRegister" aria-expanded="false" aria-controls="collapseProductRegister">
-					상품 등록
-				</button>
-			</div>
-			<div class="collapse p-3 border border-5 rounded" id="collapseProductRegister">
-				<div class="mb-3">
-					<label for="product_name" class="form-label">상품명</label>
-					<label class="text-danger">*</label>
-					<input type="text" class="form-control" name="name" id="product_name">
-				</div>
+<div class="container d-grid gap-3">
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseProductRegister" aria-expanded="false" aria-controls="collapseProductRegister">
+            상품 등록
+        </button>
+    </div>
 
-				<div class="mb-3">
-					<label for="product_details" class="form-label">상품 상세내용
-						<label class="text-danger">*</label>
-					</label>
-					<!-- <div id="editor"></div> -->
-					<textarea class="form-control" name="details" cols="30" rows="5"
-								id="product_details"></textarea>
-				</div>
+    <div class="d-flex justify-content-around gap-3">
+        <div class="col-7">
+            <div class="d-flex flex-column justify-content-center align-items-center overlay visually-hidden">
+                <div class="spinner-border text-warning" role="status">
+                </div>
+                <h3>Loading...</h3>
+            </div>
+            <div id="product-list-area" class="">
+            </div>
+        </div>
+        <div class="col-5 collapse p-3 border border-5 rounded" id="collapseProductRegister">
+            <form method="post" action="/api/product/registration" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="product_name" class="form-label">상품명</label>
+                    <label class="text-danger">*</label>
+                    <input type="text" class="form-control" name="name" id="product_name">
+                </div>
 
-				<div class="mb-3">
-					<label for="productRegiserFormFile" class="form-label">상품 사진</label>
-					<input class="form-control" type="file" id="productRegiserFormFile" accept="image/*" multiple>
-					<div class="border border-1 border-warning p-1" id="productRegiserFormFilePreview">
-					</div>
-				</div>
+                <div class="mb-3">
+                    <label for="product_details" class="form-label">상품 상세내용
+                        <label class="text-danger">*</label>
+                    </label>
+                    <!-- <div id="editor"></div> -->
+                    <textarea class="form-control" name="details" cols="30" rows="5"
+                              id="product_details"></textarea>
+                </div>
 
-				<div class="mb-3 d-flex justify-content-center">
-					<button class="btn btn-primary" type="button" id="productRegistrationSubmitBtn">등록</button>
-				</div>
-			</div>
-			
-			<div class="d-flex justify-content-around gap-3">
-				<div class="col-7">
-					<div class="d-flex flex-column justify-content-center align-items-center overlay visually-hidden">
-						<div class="spinner-border text-warning" role="status">
-						</div>
-						<h3>Loading...</h3>
-					</div>
-					<ul id="product-list-area" class="list-group">
-					</ul>
-				</div>
-				<div class="col-5 collapse" id="productModifyForm">
-					<div class="mb-3">
-						<label for="product_name" class="form-label">상품명</label>
-						<label class="text-danger">*</label>
-						<input type="text" class="form-control" name="name" id="product_name">
-					</div>
-	
-					<div class="mb-3">
-						<label for="product_details" class="form-label">상품 상세내용
-							<label class="text-danger">*</label>
-						</label>
-						<textarea class="form-control" name="details" cols="30" rows="5"
-									id="product_details"></textarea>
-					</div>
-	
-					<div class="mb-3">
-						<label for="productRegiserFormFile" class="form-label">상품 사진</label>
-						<input class="form-control" type="file" id="productRegiserFormFile" accept="image/*" multiple>
-						<div class="border border-1 border-warning p-1" id="productRegiserFormFilePreview">
-						</div>
-					</div>
-	
-					<div class="mb-3 d-flex justify-content-center">
-						<button class="btn btn-warning" type="button" id="productModificationSubmitBtn">변경 사항 적용</button>
-					</div>
-				</div>
-			</div>
-		</div>
+                <div class="mb-3">
+                    <label for="productRegiserFormFile" class="form-label">상품 사진</label>
+                    <input class="form-control" type="file" id="productRegisterFormFile" accept="image/*" name="images" multiple>
+                    <div class="border border-1 border-warning p-1" id="productRegisterFormFilePreview">
+                    </div>
+                </div>
 
-	</body>
-	<script src="/javascripts/product/list.js"></script>
-	<script src="/javascripts/product/register.js"></script>
-	<script type="module" src="/javascripts/product/modify.js"></script>
-	<script src="/javascripts/product/remove.js"></script>
-	<script src="/javascripts/product/like.js"></script>
+                <div class="mb-3 d-flex justify-content-center">
+                    <button class="btn btn-primary" type="submit" id="productRegistrationSubmitBtn">등록</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-5 collapse p-3 border border-5 rounded" id="productModifyForm">
+            <div class="mb-3">
+                <label for="product_name" class="form-label">상품명</label>
+                <label class="text-danger">*</label>
+                <input type="text" class="form-control" name="name" id="product_name">
+            </div>
+
+            <div class="mb-3">
+                <label for="product_details" class="form-label">상품 상세내용
+                    <label class="text-danger">*</label>
+                </label>
+                <textarea class="form-control" name="details" cols="30" rows="5"
+                          id="product_details"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="productModifyFormFile" class="form-label">상품 사진</label>
+                <div class="d-flex flex-column" id="productModifyFormFilePreview">
+                </div>
+                <small for="productModifyFormFile" class="form-label">파일 추가</small>
+                <input class="form-control" type="file" id="productModifyFormFile" accept="image/*" multiple>
+            </div>
+
+            <div class="mb-3 d-flex justify-content-center">
+                <button class="btn btn-warning" type="button" id="productModificationSubmitBtn">변경 사항 적용</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script src="/javascripts/product/list.js"></script>
+<script src="/javascripts/product/register.js"></script>
+<script type="module" src="/javascripts/product/modify.js"></script>
+<script src="/javascripts/product/remove.js"></script>
+<script src="/javascripts/product/like.js"></script>
 
 </html>

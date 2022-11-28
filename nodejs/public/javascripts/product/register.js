@@ -9,9 +9,10 @@
 // });
 
 // editor.getHTML()
+const productRegisterFormFilePreview = $("#productRegisterFormFilePreview");
 
-$("#productRegiserFormFile").on('change', (e) => {
-	$("#productRegiserFormFilePreview").html('');
+$("#productRegisterFormFile").on('change', (e) => {
+	productRegisterFormFilePreview.html('');
 
 	// console.log($(e.target.files));
 	for (const file of e.target.files) {
@@ -23,18 +24,9 @@ $("#productRegiserFormFile").on('change', (e) => {
 			imageTag.title = file.name;
 			imageTag.classList.add('img-fluid', 'mb-1');
 			imageTag.src = this.result;
-			$("#productRegiserFormFilePreview").append(imageTag);
+			$("#productRegisterFormFilePreview").append(imageTag);
 		};
-
 		reader.readAsDataURL(file);
-		// console.log(file);
-		// const src = URL.createObjectURL(file);
-
-		// $("#productRegiserFormFilePreview").append("<img src='" + src + "' />")
-
-		// $("#productRegiserFormFilePreview").on("load", () => {
-		// 	URL.revokeObjectURL(src) // free memory
-		// });
 	}
 });
 
@@ -43,52 +35,42 @@ $("#productRegistrationSubmitBtn").click(function () {
 
 	const bsCollapse = new bootstrap.Collapse('#collapseProductRegister');
 
-	// console.log($("#productRegiserFormFile")[0].files);
-
 	$(".overlay").toggleClass('visually-hidden');
 
-	// let form = $("#productRegisterForm")[0];
-	// let formData = new FormData(form);
-	// console.log(form);
-	// console.log(formData);
-
-	// let keys = formData.keys();
-	// for (const pair of keys) {
-	// 	console.log(pair);
+	// const product = {
+	// 	name: $("#collapseProductRegister input[name='name']").val(),
+	// 	details: $("#collapseProductRegister textarea[name='details']").val(),
+	// 	images: $('#productRegisterFormFile').prop('files')
 	// }
 
-	const product = {
-		name: $("#collapseProductRegister input[name='name']").val(),
-		details: $("#collapseProductRegister textarea[name='details']").val(),
-		images: []
-	}
+	// const images = $(document).find('#productRegisterFormFilePreview img').toArray();
+	// for (const image of images) {
+	// 	product.images.push({ src: image.src });
+	// }
 
-	const images = $(document).find('#productRegiserFormFilePreview img').toArray();
-	for (const image of images) {
-		product.images.push({ src: image.src });
-	}
+	console.log($('#productRegisterFormFile'));
+	console.log($('#productRegisterFormFile').val());
+	console.log($('#productRegisterFormFile').prop('files'));
 
-	console.log(product);
-
-	$.ajax({
-		type: "POST",
-		url: "/api/product/registration",
-		data: {
-			name: product.name,
-			details: product.details,
-			images: product.images
-		},
-		success: async function (data) {
-			console.log(data);
-			$("#productRegisterForm input[name='name']").val('');
-			$("#productRegisterForm textarea[name='details']").val('');
-			await getProductList();
-			setTimeout(function () {
-				$(".overlay").toggleClass('visually-hidden');
-				bsCollapse.hide();
-			}, 500);
-			
-		}
-	});
+	// $.ajax({
+	// 	type: "POST",
+	// 	url: "/api/product/registration",
+	// 	data: {
+	// 		name: $("#collapseProductRegister input[name='name']").val(),
+	// 		details: $("#collapseProductRegister textarea[name='details']").val(),
+	// 		images: $('#productRegisterFormFile').prop('files')
+	// 	},
+	// 	success: async function (data) {
+	// 		console.log(data);
+	// 		$("#productRegisterForm input[name='name']").val('');
+	// 		$("#productRegisterForm textarea[name='details']").val('');
+	// 		await getProductList();
+	// 		setTimeout(function () {
+	// 			$(".overlay").toggleClass('visually-hidden');
+	// 			bsCollapse.hide();
+	// 		}, 500);
+	//
+	// 	}
+	// });
 
 });

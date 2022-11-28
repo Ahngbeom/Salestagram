@@ -23,37 +23,39 @@ function getProductList() {
 
 function createBootstrapCarousel(images) {
 
-	if (images === null)
-		return;
-
 	let carousel = "<div id=\"carouselExampleIndicators\" class=\"carousel slide p-1\" data-bs-ride=\"false\">";
-
 	let indicatorsBtns = "<div class=\"carousel-indicators\">";
 	let carouselItem = "<div class=\"carousel-inner\">";
-	images.forEach((image, index) => {
-		if (index === 0) {
-			indicatorsBtns += "<button type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide-to=\"" + index + "\" class=\"active\" aria-current=\"true\" aria-label=\"Slide " + (index + 1) + "\"></button>";
-			carouselItem += "<div class=\"carousel-item active\">";
-		} else {
-			indicatorsBtns += "<button type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide-to=\"" + index + "\" aria-label=\"Slide " + (index + 1) + "\"></button>";
-			carouselItem += "<div class=\"carousel-item\">";
-		}
 
-		carouselItem += "<img src=\"" + image.src + "\" class=\"img-fluid d-block w-100 pb-3\" alt=\"상품 이미지 없음\">" +
+	if (images === null || images === undefined) {
+		indicatorsBtns += "</div>";
+		carouselItem += "</div>";
+		carousel += "</div>";
+	} else {
+		images.forEach((image, index) => {
+			if (index === 0) {
+				indicatorsBtns += "<button type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide-to=\"" + index + "\" class=\"active\" aria-current=\"true\" aria-label=\"Slide " + (index + 1) + "\"></button>";
+				carouselItem += "<div class=\"carousel-item active\">";
+			} else {
+				indicatorsBtns += "<button type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide-to=\"" + index + "\" aria-label=\"Slide " + (index + 1) + "\"></button>";
+				carouselItem += "<div class=\"carousel-item\">";
+			}
+			carouselItem += "<img src=\"" + image.src + "\" class=\"img-fluid d-block w-100 pb-3\" alt=\"상품 이미지 없음\">" +
+				"</div>";
+		});
+		indicatorsBtns += "</div>";
+		carouselItem += "</div>";
+		carousel += indicatorsBtns + carouselItem +
+			"<button class=\"carousel-control-prev\" type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide=\"prev\">" +
+			"<span class=\"carousel-control-prev-icon\" aria-hidden=\"true\">" + "</span>" +
+			"<span class=\"visually-hidden\">Previous</span>" +
+			"</button>" +
+			"<button class=\"carousel-control-next\" type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide=\"next\">" +
+			"<span class=\"carousel-control-next-icon\" aria-hidden=\"true\">" + "</span>" +
+			"<span class=\"visually-hidden\">Next</span>" +
+			"</button>" +
 			"</div>";
-	});
-	indicatorsBtns += "</div>";
-	carouselItem += "</div>";
-	carousel += indicatorsBtns + carouselItem +
-		"<button class=\"carousel-control-prev\" type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide=\"prev\">" +
-		"<span class=\"carousel-control-prev-icon\" aria-hidden=\"true\">" + "</span>" +
-		"<span class=\"visually-hidden\">Previous</span>" +
-		"</button>" +
-		"<button class=\"carousel-control-next\" type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide=\"next\">" +
-		"<span class=\"carousel-control-next-icon\" aria-hidden=\"true\">" + "</span>" +
-		"<span class=\"visually-hidden\">Next</span>" +
-		"</button>" +
-		"</div>";
+	}
 	return carousel;
 }
 
@@ -63,11 +65,12 @@ function createBootstrapCard(list) {
 
 	const today = new Date();
 	list.forEach((product) => {
-		const registry_date = new Date(product.regist_date);
+		console.log(product);
+		const registry_date = new Date(product.registration_date);
 		const update_date = new Date(product.update_date);
 
-		li += "<div class=\"card w-100\" data-product-id='" + product.id + "'>" +
-			createBootstrapCarousel(JSON.parse(product.images)) +
+		li += "<div class=\"card w-100\" data-product-id='" + product._id + "'>" +
+			createBootstrapCarousel(product.images) +
 			"<div class=\"card-body\">" +
 			"<h5 class=\"card-title\">" + product.name + "</h5>" +
 			"<p class=\"card-text\">" + product.details + "</p>" +
@@ -96,8 +99,9 @@ function createBootstrapCard(list) {
 
 			"</div>" +
 			"<div>" +
-			"<button type='button' class='btn btn-link link-warning productModifyBtn' data-product-id='" + product.id + "'>수정</button>" +
-			"<button type='button' class='btn btn-link link-danger productRemoveBtn' data-product-id='" + product.id + "'>삭제</button>" +
+			"<button type='button' class='btn btn-link link-warning productModifyBtn'>수정</button>" +
+			"<button type='button' class='btn btn-link link-danger productRemoveBtn'>삭제</button>" +
+			"</div>" +
 			"</div>" +
 			"</div>" +
 			"</div>";

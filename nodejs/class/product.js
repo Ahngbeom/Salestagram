@@ -12,11 +12,11 @@ redis_client.on('error', (err) => {
 });
 
 class Product {
-	constructor(id, name, details, images) {
-		this.id = id;
+	constructor(_id, name, details, images) {
+		this._id = _id;
 		this.name = name;
 		this.details = details;
-		this.images = images !== undefined ? images : null;
+		this.images = images !== undefined ? images : [];
 		this.views = 0;
 		this.like = 0;
 		const today = new Date();
@@ -65,6 +65,53 @@ class Product {
 		// this.update_date = product.update_date;
 		await redis_client.disconnect();
 		return product;
+	}
+
+	static async registration(data) {
+		await redis_client.connect();
+		let id = await redis_client.incr('product:index:1');
+		id = 'product:id:' + id;
+		console.log(id, data.name);
+		const newProduct = new Product(id, data.name, data.details, data.images);
+		console.log(newProduct);
+		await redis_client.hSet(id, 'name', newProduct.name);
+		await redis_client.hSet(id, 'details', newProduct.details);
+		await redis_client.hSet(id, 'views', newProduct.views);
+		await redis_client.hSet(id, 'like', newProduct.like);
+		await redis_client.hSet(id, 'images', JSON.stringify(newProduct.images));
+		await redis_client.hSet(id, 'regist_date', newProduct.regist_date);
+		await redis_client.hSet(id, 'update_date', newProduct.update_date);
+		await redis_client.disconnect();
+		return newProduct;
+	}
+
+	static async remove(id) {
+		await redis_client.connect();
+		console.log(id);
+		console.log(await redis_client.HKEYS(id));
+		await redis_client.HDEL(id, await redis_client.HKEYS(id));
+		await redis_client.disconnect();
+		return id;
+	}
+
+	static async modify(data) {
+		console.log(data);
+		const id = data.id;
+		await redis_client.connect();
+		await redis_client.hSet(id, 'name', data.name);
+		await redis_client.hSet(id, 'details', data.details);
+		await redis_client.hSet(id, 'images', JSON.stringify(data.images !== undefined ? data.images : []));
+		const today = new Date();
+		await redis_client.hSet(id, 'update_date', today.toJSON());
+		await redis_client.disconnect();
+		return id;
+	}
+
+	static async increaseLike(id) {
+		await redis_client.connect();
+		const result = await redis_client.hIncrBy(id, 'like', 1);
+		await redis_client.disconnect();
+		return result;
 	}
 }
 

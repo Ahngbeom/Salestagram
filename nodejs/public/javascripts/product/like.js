@@ -1,11 +1,13 @@
 $(".product-like-btn").on('click', (e) => {
-	const id = $($(e.target).parents('.card')).data('product-id');
 	$.ajax({
 		type: 'post',
 		url: '/api/product/like/increase',
-		data: {id: id},
+		data: {
+			id: $(e.target).parents('.card').data('product-id')
+		},
 		success: function(data) {
-			$(".product-like-btn small").html(data);
+			console.log(data);
+			$(".product-like-btn small").html(data.value.like);
 		},
 		error: function(xhr) {
 			console.log(xhr.responseText);
