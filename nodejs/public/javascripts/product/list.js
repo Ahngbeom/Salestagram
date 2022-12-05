@@ -2,7 +2,6 @@ const productListAreaElem = $("#product-list-area");
 
 getProductList();
 
-
 function getProductList() {
 	$.ajax({
 		type: "get",

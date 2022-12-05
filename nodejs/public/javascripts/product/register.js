@@ -33,9 +33,7 @@ $("#productRegisterFormFile").on('change', (e) => {
 
 $("#productRegistrationSubmitBtn").click(function () {
 
-	const bsCollapse = new bootstrap.Collapse('#collapseProductRegister');
-
-	$(".overlay").toggleClass('visually-hidden');
+	// $(".overlay").toggleClass('visually-hidden');
 
 	// const product = {
 	// 	name: $("#collapseProductRegister input[name='name']").val(),
@@ -47,30 +45,34 @@ $("#productRegistrationSubmitBtn").click(function () {
 	// for (const image of images) {
 	// 	product.images.push({ src: image.src });
 	// }
-
-	console.log($('#productRegisterFormFile'));
-	console.log($('#productRegisterFormFile').val());
-	console.log($('#productRegisterFormFile').prop('files'));
-
-	// $.ajax({
-	// 	type: "POST",
-	// 	url: "/api/product/registration",
-	// 	data: {
-	// 		name: $("#collapseProductRegister input[name='name']").val(),
-	// 		details: $("#collapseProductRegister textarea[name='details']").val(),
-	// 		images: $('#productRegisterFormFile').prop('files')
-	// 	},
-	// 	success: async function (data) {
-	// 		console.log(data);
-	// 		$("#productRegisterForm input[name='name']").val('');
-	// 		$("#productRegisterForm textarea[name='details']").val('');
-	// 		await getProductList();
-	// 		setTimeout(function () {
-	// 			$(".overlay").toggleClass('visually-hidden');
-	// 			bsCollapse.hide();
-	// 		}, 500);
 	//
-	// 	}
-	// });
+	// console.log($('#productRegisterFormFile'));
+	// console.log($('#productRegisterFormFile').val());
+	// console.log($('#productRegisterFormFile').prop('files'));
+
+	console.log({
+		name: $("#collapseProductRegister input[name='name']").val(),
+		details: $("#collapseProductRegister textarea[name='details']").val(),
+	});
+
+	$.ajax({
+		type: "POST",
+		url: "/api/product/registration",
+		data: {
+			name: $("#collapseProductRegister input[name='name']").val(),
+			details: $("#collapseProductRegister textarea[name='details']").val(),
+			// images: $('#productRegisterFormFile').prop('files')
+		},
+		success: async function (data) {
+			console.log(data);
+			$("#productRegisterForm input[name='name']").val('');
+			$("#productRegisterForm textarea[name='details']").val('');
+			await getProductList();
+			$('#collapseProductRegister').collapse("toggle");
+			// setTimeout(function () {
+			// 	$(".overlay").toggleClass('visually-hidden');
+			// }, 500);
+		}
+	});
 
 });

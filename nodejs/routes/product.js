@@ -5,11 +5,28 @@ const router = express.Router();
 // var product = new Product();
 
 const {MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
-const uri = "mongodb+srv://ahngbeom:1234@salestagram-cluster.poarys6.mongodb.net/?retryWrites=true&w=majority";
-const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1});
-const db = client.db("salestagram");
-const products_collection = db.collection("products");
-const productImages_collection = db.collection("product_images");
+// const uri = "mongodb+srv://ahngbeom:123@4salestagram-cluster.poarys6.mongodb.net/?retryWrites=true&w=majority";
+// const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1});
+// const db = client.db("salestagram");
+// const products_collection = db.collection("products");
+// const productImages_collection = db.collection("product_images");
+
+const mongoose = require('mongoose');
+const {Schema} = mongoose;
+mongoose.connect("mongodb+srv://ahngbeom:1234@salestagram-cluster.poarys6.mongodb.net/salestagram?retryWrites=true&w=majority", {useNewUrlParser: true});
+
+const productSchema = new mongoose.Schema({
+    // _id: Schema.Types.ObjectId,
+    name: {type: String, required: true},
+    details: {type: String, required: true},
+    views: {type: Number, default: 0},
+    like: {type: Number, default: 0},
+    registration_date: {type: Date, default: Date.now()},
+    update_date: {type: Date, default: Date.now()}
+})
+
+const Product = mongoose.model('Product', productSchema);
+
 
 const fs = require('fs');
 const multer = require('multer');
@@ -22,7 +39,7 @@ let storage = multer.diskStorage({
     }
 });
 
-let upload = multer({ storage: storage });
+let upload = multer({storage: storage});
 
 /* GET home page. */
 router.get('/', async (req, res, next) => {
@@ -34,19 +51,20 @@ router.get('/product/register', async (req, res, next) => {
 });
 
 router.get('/api/product/list', async (req, res, next) => {
-    await client.connect();
-    let list = [];
-    const cursor = await products_collection.find();
-    await cursor.forEach((product) => {
-        // console.log(product._id, product.name);
-        list.push(product);
-    });
-    await client.close();
-    list.sort((a, b) => {
-        return b.update_date - a.update_date;
-    });
-    // console.log(list);
-    res.json(list);
+    res.json(await Product.find());
+    // await client.connect();
+    // let list = [];
+    // const cursor = await products_collection.find();
+    // await cursor.forEach((product) => {
+    //     // console.log(product._id, product.name);
+    //     list.push(product);
+    // });
+    // await client.close();
+    // list.sort((a, b) => {
+    //     return b.update_date - a.update_date;
+    // });
+    // // console.log(list);
+    // res.json(list);
 });
 
 router.get('/api/product/info', async (req, res, next) => {
@@ -56,10 +74,23 @@ router.get('/api/product/info', async (req, res, next) => {
     res.json(result);
 });
 
-router.post('/api/product/registration', upload.array('images'), async (req, res, next) => {
+router.post('/api/product/registration', async (req, res, next) => {
     // await client.connect();
-    console.log(req.body);
-    console.log(req.files);
+    // console.log(req.body);
+    // console.log(req.files);
+
+    const product = new Product({
+        name: req.body.name,
+        details: req.body.details
+    });
+
+    await product.save()
+        .then(() => {
+            console.log("Saved: " + product);
+        })
+        .catch((err) => {
+            console.error("Error: " + err);
+        });
     // const result = await collection.insertOne({
     //     name: req.body.name,
     //     details: req.body.details,
@@ -70,7 +101,7 @@ router.post('/api/product/registration', upload.array('images'), async (req, res
     //     update_date: Date.now()
     // });
     // await client.close();
-    // res.json(result.insertedId);
+    res.json(product._id);
 });
 
 router.post('/api/product/remove', async (req, res, next) => {

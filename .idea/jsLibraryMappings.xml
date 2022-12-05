@@ -2,8 +2,6 @@
 <project version="4">
   <component name="JavaScriptLibraryMappings">
     <file url="file://$PROJECT_DIR$" libraries="{Node.js Core, jquery-3.6.1, toastui-editor, toastui-editor-all}" />
-    <file url="file://$PROJECT_DIR$/nodejs/public/javascripts/product/modify.js" libraries="{1565c02ecf, bootstrap, font-awesome, jquery-3.6.0, popper.js}" />
-    <file url="file://$PROJECT_DIR$/nodejs/public/javascripts/product/register.js" libraries="{bootstrap}" />
     <excludedPredefinedLibrary name="HTML" />
   </component>
 </project>
