@@ -64,7 +64,6 @@ function createBootstrapCard(list) {
 
 	const today = new Date();
 	list.forEach((product) => {
-		console.log(product);
 		const registry_date = new Date(product.registration_date);
 		const update_date = new Date(product.update_date);
 

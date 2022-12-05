@@ -50,11 +50,6 @@ $("#productRegistrationSubmitBtn").click(function () {
 	// console.log($('#productRegisterFormFile').val());
 	// console.log($('#productRegisterFormFile').prop('files'));
 
-	console.log({
-		name: $("#collapseProductRegister input[name='name']").val(),
-		details: $("#collapseProductRegister textarea[name='details']").val(),
-	});
-
 	$.ajax({
 		type: "POST",
 		url: "/api/product/registration",
@@ -72,6 +67,9 @@ $("#productRegistrationSubmitBtn").click(function () {
 			// setTimeout(function () {
 			// 	$(".overlay").toggleClass('visually-hidden');
 			// }, 500);
+		},
+		error: async function (xhr) {
+			console.error(xhr.responseText);
 		}
 	});
 

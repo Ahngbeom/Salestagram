@@ -6,8 +6,7 @@ $(".product-like-btn").on('click', (e) => {
 			id: $(e.target).parents('.card').data('product-id')
 		},
 		success: function(data) {
-			console.log(data);
-			$(".product-like-btn small").html(data.value.like);
+			$(e.target).find('small').html(data.like);
 		},
 		error: function(xhr) {
 			console.log(xhr.responseText);

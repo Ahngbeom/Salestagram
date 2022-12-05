@@ -1,5 +1,6 @@
 const productModificationSubmitBtn = $("#productModificationSubmitBtn");
 const productModifyForm = $("#productModifyForm");
+const productModifyFormId = productModifyForm.find("input[name='_id']");
 const productModifyFormName = productModifyForm.find("input[name='name']");
 const productModifyFormDetails = productModifyForm.find("textarea[name='details']");
 const productModifyFormFile = $("#productModifyFormFile");
@@ -67,6 +68,7 @@ productModifyForm.on('show.bs.collapse', event => {
     product = getProductInfo(product.id);
     console.log(product);
 
+    productModifyFormId.val(product._id);
     productModifyFormName.val(product.name);
     productModifyFormDetails.val(product.details);
     productModifyFormFile.val('');
@@ -121,10 +123,11 @@ productModificationSubmitBtn.on('click', async () => {
         url: "/api/product/modify",
         async: false,
         data: {
+            _id: $("#productModifyForm input[name='_id']").val(),
             name: $("#productModifyForm input[name='name']").val(),
             details: $("#productModifyForm textarea[name='details']").val(),
-            images: req.body.images,
-            update_date: Date.now()
+            // images: req.body.images,
+            // update_date: Date.now()
         },
         success: function (data) {
             console.log("Modify Product [" + data + "]");
