@@ -4,9 +4,9 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-
-const productRouter = require('./routes/product');
+const productRouter = require('./routes/product/product');
 const usersRouter = require('./routes/users');
+const attachmentRouter = require('./routes/product/attachment');
 
 const app = express();
 
@@ -20,13 +20,9 @@ app.use(cors());
 app.use(express.urlencoded({limit: '50mb', extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(express.static(path.join(__dirname, 'salestagram-react/build')));
-
-// app.get('/', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'salestagram-react/build/index.html'));
-// })
 
 app.use('/', productRouter);
+app.use('/test', attachmentRouter);
 // app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler

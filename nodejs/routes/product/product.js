@@ -27,27 +27,14 @@ const productSchema = new Schema({
 
 const Product = mongoose.model('Product', productSchema);
 
-const fs = require('fs');
-const multer = require('multer');
-let storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, './public/images')
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + '.jpeg')
-    }
-});
-
-let upload = multer({storage: storage});
-
 /* GET home page. */
 router.get('/', async (req, res, next) => {
     res.render('index', {title: 'Salestagram'});
 });
 
-router.get('/product/register', async (req, res, next) => {
-    res.render('product/register', {title: 'Salestagram - Register'});
-});
+// router.get('/product/register', async (req, res, next) => {
+//     res.render('product/register', {title: 'Salestagram - Register'});
+// });
 
 router.get('/api/product/list', async (req, res, next) => {
     res.json(await Product.find());
@@ -58,19 +45,22 @@ router.get('/api/product/info', async (req, res, next) => {
 });
 
 router.post('/api/product/registration', async (req, res, next) => {
-    const product = new Product({
-        name: req.body.name,
-        details: req.body.details
-    });
+    console.log(req.body);
+    console.log(req.file);
 
-    await product.save()
-        .then(() => {
-            console.log("Saved: " + product);
-        })
-        .catch((err) => {
-            console.error("Error: " + err);
-        });
-    res.json(product._id);
+    // const product = new Product({
+    //     name: req.body.name,
+    //     details: req.body.details
+    // });
+
+    // await product.save()
+    //     .then(() => {
+    //         console.log("Saved: " + product);
+    //     })
+    //     .catch((err) => {
+    //         console.error("Error: " + err);
+    //     });
+    // res.json(product._id);
 });
 
 router.post('/api/product/remove', async (req, res, next) => {
@@ -80,17 +70,6 @@ router.post('/api/product/remove', async (req, res, next) => {
 });
 
 router.post('/api/product/modify', async (req, res, next) => {
-    // await client.connect();
-    // console.log(products_collection.findOne({_id: req.body.id}));
-    // const result = await products_collection.findOneAndUpdate({_id: req.body.id}, {
-    //     $set: {
-    //         name: req.body.name,
-    //         details: req.body.details,
-    //         images: req.body.images,
-    //         update_date: req.body.update_date
-    //     }
-    // }, {returnDocument: "after"});
-    // await client.close();
     res.json(await Product.findByIdAndUpdate(req.body._id,
             {
                 name: req.body.name,
