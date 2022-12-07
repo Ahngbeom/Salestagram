@@ -1,24 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
-// const Product = require('../class/product.js');
-// var product = new Product();
-
-// const {MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
-// const uri = "mongodb+srv://ahngbeom:123@4salestagram-cluster.poarys6.mongodb.net/?retryWrites=true&w=majority";
-// const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1});
-// const db = client.db("salestagram");
-// const products_collection = db.collection("products");
-// const productImages_collection = db.collection("product_images");
+require('dotenv').config();
 
 const mongoose = require('mongoose');
-const {Schema} = mongoose;
-mongoose.connect("mongodb+srv://ahngbeom:1234@salestagram-cluster.poarys6.mongodb.net/salestagram?retryWrites=true&w=majority", {useNewUrlParser: true});
+const mongouri = "mongodb+srv://" + process.env.MONGODB_ID + ":" + process.env.MONGODB_PW + "@" + process.env.MONGODB_HOST + "/" + process.env.MONGODB_DB + "?retryWrites=true&w=majority";
+mongoose.connect(mongouri, {useNewUrlParser: true});
 
-const productSchema = new Schema({
+const {fs, multer, GridFsStorage, bucket, storage, upload, AttachmentSchema, Attachment} = require('../attachment');
+
+const productSchema = new mongoose.Schema({
     // _id: Schema.Types.ObjectId,
     name: {type: String, required: true},
     details: {type: String, required: true},
+    // attachments: [AttachmentSchema],
+    attachments: [{type: String}],
     views: {type: Number, default: 0},
     like: {type: Number, default: 0},
     registration_date: {type: Date, default: Date.now()},
@@ -44,23 +40,44 @@ router.get('/api/product/info', async (req, res, next) => {
     res.json(await Product.findById(req.query.id));
 });
 
-router.post('/api/product/registration', async (req, res, next) => {
+router.post('/api/product/registration', upload.array('images'), async (req, res, next) => {
     console.log(req.body);
-    console.log(req.file);
+    const product = new Product({
+        name: req.body.name,
+        details: req.body.details
+    });
 
-    // const product = new Product({
-    //     name: req.body.name,
-    //     details: req.body.details
-    // });
+    for (const file of req.files) {
+        console.log(file);
+        // const attachment = new Attachment({
+        //     type: file.mimetype,
+        //     data: fs.readFileSync(file.path)
+        // });
+        // await attachment.save()
+        //     .then(() => {
+        //         console.log("Saved: " + attachment);
+        //     })
+        //     .catch((err) => {
+        //         console.error("Error: " + err);
+        //     });
+        product.attachments.push(file.id);
+        // fs.unlink(file.path, function (err) {
+        //     if (err)
+        //         throw err;
+        //     console.log('successfully deleted ' + file.path);
+        // });
+    }
+    // console.log(productAttachments);
 
-    // await product.save()
-    //     .then(() => {
-    //         console.log("Saved: " + product);
-    //     })
-    //     .catch((err) => {
-    //         console.error("Error: " + err);
-    //     });
-    // res.json(product._id);
+    await product.save()
+        .then(() => {
+            console.log("Saved: " + product);
+        })
+        .catch((err) => {
+            console.error("Error: " + err);
+        });
+
+    res.json(product._id);
 });
 
 router.post('/api/product/remove', async (req, res, next) => {

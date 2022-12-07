@@ -31,7 +31,7 @@ $("#productRegisterFormFile").on('change', (e) => {
 });
 
 
-$("#productRegistrationSubmitBtn").click(function () {
+$("#productRegistrationSubmitBtn").click( () => {
 
 	// $(".overlay").toggleClass('visually-hidden');
 
@@ -53,11 +53,14 @@ $("#productRegistrationSubmitBtn").click(function () {
 	$.ajax({
 		type: "POST",
 		url: "/api/product/registration",
-		data: {
-			name: $("#collapseProductRegister input[name='name']").val(),
-			details: $("#collapseProductRegister textarea[name='details']").val(),
-			// images: $('#productRegisterFormFile').prop('files')
-		},
+		// data: {
+		// 	name: $("#collapseProductRegister input[name='name']").val(),
+		// 	details: $("#collapseProductRegister textarea[name='details']").val(),
+		// 	// images: $('#productRegisterFormFile').prop('files')
+		// },
+		contentType: false,
+		processData: false,
+		data: new FormData($("#productRegisterForm")[0]),
 		success: async function (data) {
 			console.log(data);
 			$("#productRegisterForm input[name='name']").val('');

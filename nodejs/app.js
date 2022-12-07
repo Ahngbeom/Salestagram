@@ -6,7 +6,7 @@ const logger = require('morgan');
 const cors = require('cors');
 const productRouter = require('./routes/product/product');
 const usersRouter = require('./routes/users');
-const attachmentRouter = require('./routes/product/attachment');
+const attachmentRouter = require('./routes/attachment').router;
 
 const app = express();
 
@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', productRouter);
-app.use('/test', attachmentRouter);
+app.use('/', attachmentRouter);
 // app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler

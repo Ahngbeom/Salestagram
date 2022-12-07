@@ -1,6 +1,9 @@
+import {getAttachmentInfo, getAllAttachmentInfo} from './attachment.js';
+
 const productListAreaElem = $("#product-list-area");
 
 getProductList();
+getAllAttachmentInfo();
 // $('#collapseProductRegister').collapse("toggle");
 
 function getProductList() {
@@ -21,18 +24,18 @@ function getProductList() {
     });
 }
 
-function createBootstrapCarousel(images) {
+function createBootstrapCarousel(attachments) {
 
     let carousel = "<div id=\"carouselExampleIndicators\" class=\"carousel slide p-1\" data-bs-ride=\"false\">";
     let indicatorsBtns = "<div class=\"carousel-indicators\">";
     let carouselItem = "<div class=\"carousel-inner\">";
 
-    if (images === null || images === undefined) {
+    if (attachments === null || attachments === undefined) {
         indicatorsBtns += "</div>";
         carouselItem += "</div>";
         carousel += "</div>";
     } else {
-        images.forEach((image, index) => {
+        attachments.forEach((attachment_id, index) => {
             if (index === 0) {
                 indicatorsBtns += "<button type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide-to=\"" + index + "\" class=\"active\" aria-current=\"true\" aria-label=\"Slide " + (index + 1) + "\"></button>";
                 carouselItem += "<div class=\"carousel-item active\">";
@@ -40,7 +43,8 @@ function createBootstrapCarousel(images) {
                 indicatorsBtns += "<button type=\"button\" data-bs-target=\"#carouselExampleIndicators\" data-bs-slide-to=\"" + index + "\" aria-label=\"Slide " + (index + 1) + "\"></button>";
                 carouselItem += "<div class=\"carousel-item\">";
             }
-            carouselItem += "<img src=\"" + image.src + "\" class=\"img-fluid d-block w-100 pb-3\" alt=\"상품 이미지 없음\">" +
+            console.log(getAttachmentInfo(attachment_id));
+            carouselItem += "<img src=\"" + "" + "\" class=\"img-fluid d-block w-100 pb-3\" alt=\"상품 이미지 없음\">" +
                 "</div>";
         });
         indicatorsBtns += "</div>";
@@ -69,7 +73,7 @@ function createBootstrapCard(list) {
         const update_date = new Date(product.update_date);
 
         li += "<div class=\"card w-100\" data-product-id='" + product._id + "'>" +
-            createBootstrapCarousel(product.images) +
+            createBootstrapCarousel(product.attachments) +
             "<div class=\"card-body\">" +
             "<h5 class=\"card-title\">" + product.name + "</h5>" +
             "<p class=\"card-text\">" + product.details + "</p>" +
